@@ -1,0 +1,84 @@
+{
+  "info": "OK",
+  "regeocode": {
+    "addressComponent": {
+      "citycode": "0532",
+      "adcode": "370203",
+      "neighborhoodType": "",
+      "neighborhood": "",
+      "building": "",
+      "buildingType": "",
+      "street": "台东三路",
+      "streetNumber": "63-2号",
+      "province": "山东省",
+      "city": "青岛市",
+      "district": "市北区",
+      "township": "台东街道"
+    },
+    "formattedAddress": "山东省青岛市市北区台东街道台东万达广场(台东店)",
+    "roads": [
+      {
+        "id": "0532J51F04800364",
+        "name": "台东三路",
+        "distance": 5,
+        "direction": "西南",
+        "location": {
+          "P": 36.083,
+          "R": 120.35500000000002,
+          "lng": 120.355,
+          "lat": 36.083
+        }
+      },
+      {
+        "id": "0532J51F04700380",
+        "name": "和兴路",
+        "distance": 30,
+        "direction": "东南",
+        "location": {
+          "P": 36.0832,
+          "R": 120.35500000000002,
+          "lng": 120.355,
+          "lat": 36.0832
+        }
+      },
+      {
+        "id": "0532J51F04800392",
+        "name": "人和路",
+        "distance": 30,
+        "direction": "东南",
+        "location": {
+          "P": 36.0832,
+          "R": 120.35500000000002,
+          "lng": 120.355,
+          "lat": 36.0832
+        }
+      }
+    ],
+    "crosses": [
+      {
+        "distance": 30,
+        "direction": "东南",
+        "first_id": "0532J51F04700380",
+        "first_name": "和兴路",
+        "second_name": "台东三路",
+        "second_id": "0532J51F04800364",
+        "location": {
+          "P": 36.08318861,
+          "R": 120.35494970000002,
+          "lng": 120.35495,
+          "lat": 36.083189
+        }
+      }
+    ]
+  },
+  "position": {
+    "P": 36.082982,
+    "R": 120.35517299999998,
+    "lng": 120.355173,
+    "lat": 36.082982
+  },
+  "address": "山东省青岛市市北区台东街道台东万达广场(台东店)",
+  "nearestJunction": "和兴路与台东三路交叉口东南方向30米",
+  "nearestRoad": "台东三路",
+  "nearestPOI": "万达广场(台东店)北面69米"
+}

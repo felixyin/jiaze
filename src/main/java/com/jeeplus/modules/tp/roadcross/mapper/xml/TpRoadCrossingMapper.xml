@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.tp.roadcross.mapper.TpRoadCrossingMapper">
+
+	<sql id="tpRoadCrossingColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.name AS "name",
+		a.sarea_id AS "sarea.id",
+		a.township AS "township",
+		a.road1_id AS "tpRoad1.id",
+		a.road2_id AS "tpRoad2.id",
+		a.road3_id AS "tpRoad3.id",
+		a.road4_id AS "tpRoad4.id",
+		a.lng AS "lng",
+		a.lat AS "lat",
+		a.remarks AS "remarks",
+		b.name AS "sarea.name",
+		tpRoad1.name AS "tpRoad1.name",
+		tpRoad2.name AS "tpRoad2.name",
+		tpRoad3.name AS "tpRoad3.name",
+		tpRoad4.name AS "tpRoad4.name"
+	</sql>
+
+	<sql id="tpRoadCrossingJoins">
+			LEFT JOIN sys_area b ON b.id = a.sarea_id
+		LEFT JOIN tp_road tpRoad1 ON tpRoad1.id = a.road1_id
+		LEFT JOIN tp_road tpRoad2 ON tpRoad2.id = a.road2_id
+		LEFT JOIN tp_road tpRoad3 ON tpRoad3.id = a.road3_id
+		LEFT JOIN tp_road tpRoad4 ON tpRoad4.id = a.road4_id
+	</sql>
+
+
+	<select id="get" resultType="TpRoadCrossing" >
+		SELECT
+		<include refid="tpRoadCrossingColumns"/>
+		FROM tp_road_crossing a
+		<include refid="tpRoadCrossingJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="TpRoadCrossing" >
+		SELECT
+		<include refid="tpRoadCrossingColumns"/>
+		FROM tp_road_crossing  a
+		<include refid="tpRoadCrossingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+			<if test="name != null and name != ''">
+				AND a.`name` LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%')</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%')</if>
+			</if>
+			<if test="sarea != null  and sarea.name != null and sarea.name != ''">
+				AND b.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{sarea.name}||'%')</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{sarea.name}, '%')</if>
+				<if test="dbName == 'mssql'">'%'+#{sarea.name}+'%')</if>
+			</if>
+			<if test="sarea != null  and sarea.id != null and sarea.id != ''">
+				AND b.id = #{sarea.id} OR b.parent_ids LIKE
+				<if test="dbName == 'oracle'">'%,'||#{sarea.id}||',%')</if>
+				<if test="dbName == 'mysql'">CONCAT('%,', #{sarea.id}, ',%')</if>
+				<if test="dbName == 'mssql'">'%'+#{sarea.id}+'%')</if>
+			</if>
+			<if test="township != null and township != ''">
+				AND a.township LIKE
+				<if test="dbName == 'oracle'">'%'||#{township}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{township}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{township},'%')</if>
+			</if>
+			<if test="tpRoad1 != null and tpRoad1.id != null and tpRoad1.id != ''">
+				AND a.road1_id = #{tpRoad1.id}
+			</if>
+			<if test="tpRoad2 != null and tpRoad2.id != null and tpRoad2.id != ''">
+				AND a.road2_id = #{tpRoad2.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="TpRoadCrossing" >
+		SELECT
+		<include refid="tpRoadCrossingColumns"/>
+		FROM tp_road_crossing a
+		<include refid="tpRoadCrossingJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO tp_road_crossing(
+			id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag,
+			name,
+			sarea_id,
+			township,
+			road1_id,
+			road2_id,
+			road3_id,
+			road4_id,
+			lng,
+			lat,
+			remarks
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{name},
+			#{sarea.id},
+			#{township},
+			#{tpRoad1.id},
+			#{tpRoad2.id},
+			#{tpRoad3.id},
+			#{tpRoad4.id},
+			#{lng},
+			#{lat},
+			#{remarks}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE tp_road_crossing SET
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			name = #{name},
+			sarea_id = #{sarea.id},
+			township = #{township},
+			road1_id = #{tpRoad1.id},
+			road2_id = #{tpRoad2.id},
+			road3_id = #{tpRoad3.id},
+			road4_id = #{tpRoad4.id},
+			lng = #{lng},
+			lat = #{lat},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+
+
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM tp_road_crossing
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE sarea_id = #{sarea.id}
+			</otherwise>
+		</choose>
+	</update>
+
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE tp_road_crossing SET
+		del_flag = #{DEL_FLAG_DELETE}
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE sarea_id = #{sarea.id}
+			</otherwise>
+		</choose>
+	</update>
+
+
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="TpRoadCrossing" statementType="STATEMENT">
+		select * FROM tp_road_crossing  where ${propertyName} = '${value}'
+	</select>
+
+	<select id="findByName" resultType="TpRoadCrossing">
+		select * from tp_road_crossing where `name` = #{name}
+	</select>
+
+</mapper>

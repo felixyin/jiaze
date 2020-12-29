@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.tp.maintenance.mapper.TpMaintenanceMapper">
+    
+	<sql id="tpMaintenanceColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.num AS "num",
+		a.job_type AS "jobType",
+		a.malfunction_type AS "malfunctionType",
+		a.job_source AS "source",
+		a.job_description AS "jobDescription",
+		a.location AS "location",
+		a.area_id AS "area.id",
+		a.roadcross_id AS "roadcross.id",
+		a.nearest_junction AS "nearestJunction",
+		a.road_id AS "road.id",
+		a.address AS "address",
+		a.nearest_poi AS "nearestPoi",
+		a.send_by AS "sendBy.id",
+		a.send_date AS "sendDate",
+		a.what_day AS "whatDay",
+		a.office AS "office.id",
+		a.leader_by AS "leaderBy.id",
+		a.job_begin_date AS "jobBeginDate",
+		a.job_end_date AS "jobEndDate",
+		a.money AS "money",
+		a.process AS "process",
+		a.pre_pic AS "prePic",
+		a.middle_pic AS "middlePic",
+		a.after_pic AS "afterPic",
+		a.approve AS "approve",
+		a.status AS "status",
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+		area.name AS "area.name",
+				
+		roadcross.name AS "roadcross.name",
+				
+				
+		road.name AS "road.name",
+		road.road_type AS "road.roadType",
+				
+				
+				
+		sendBy.name AS "sendBy.name",
+				
+				
+		office.name AS "office.name",
+
+		leaderBy.name AS "leaderBy.name"
+	</sql>
+	
+	<sql id="tpMaintenanceJoins">
+		
+		LEFT JOIN tp_road_crossing delFlag ON delFlag.id = a.del_flag
+		LEFT JOIN sys_area area ON area.id = a.area_id
+		LEFT JOIN tp_road_crossing roadcross ON roadcross.id = a.roadcross_id
+		LEFT JOIN tp_road road ON road.id = a.road_id
+		LEFT JOIN sys_user sendBy ON sendBy.id = a.send_by
+		LEFT JOIN sys_office office ON office.id = a.office
+		LEFT JOIN sys_user leaderBy ON leaderBy.id = a.leader_by
+	</sql>
+	
+    <resultMap type="TpMaintenance" id="TpMaintenanceResult" autoMapping="true">
+    	<result column="process" property="process"   typeHandler="com.jeeplus.core.mapper.ConvertBlobTypeHandler"/>
+    </resultMap>
+    
+	<select id="get" resultMap="TpMaintenanceResult" >
+		SELECT 
+			<include refid="tpMaintenanceColumns"/>
+		FROM tp_maintenance a
+		<include refid="tpMaintenanceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultMap="TpMaintenanceResult" >
+		SELECT 
+			<include refid="tpMaintenanceColumns"/>
+		FROM tp_maintenance a
+		<include refid="tpMaintenanceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+			<if test="num != null and num != ''">
+				AND a.num = #{num}
+			</if>
+			<if test="jobType != null and jobType != ''">
+				AND concat(a.job_type,',') like concat('%',#{jobType},',%')
+			</if>
+			<if test="jobDescription != null and jobDescription != ''">
+				AND a.job_description = #{jobDescription}
+			</if>
+			<if test="source != null and source != ''">
+				AND a.job_source = #{source}
+			</if>
+			<if test="area != null and area.id != null and area.id != ''">
+				AND a.area_id = #{area.id}
+			</if>
+			<if test="roadcross != null and roadcross.id != null and roadcross.id != ''">
+				AND a.roadcross_id = #{roadcross.id}
+			</if>
+			<if test="road != null and road.id != null and road.id != ''">
+				AND a.road_id = #{road.id}
+			</if>
+			<if test="address != null and address != ''">
+				AND a.address LIKE 
+					<if test="dbName == 'oracle'">'%'||#{address}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{address}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{address},'%')</if>
+			</if>
+			<if test="nearestPoi != null and nearestPoi != ''">
+				AND a.nearest_poi LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nearestPoi}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{nearestPoi}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{nearestPoi},'%')</if>
+			</if>
+			<if test="sendBy != null and sendBy.id != null and sendBy.id != ''">
+				AND a.send_by = #{sendBy.id}
+			</if>
+			<if test="beginSendDate !=null">
+				AND  DATE_FORMAT(a.send_date,'%Y-%m-%d') &gt;= DATE_FORMAT(#{beginSendDate},'%Y-%m-%d')
+			</if>
+			<if test="endSendDate !=null">
+				AND  DATE_FORMAT(a.send_date,'%Y-%m-%d') &lt;= DATE_FORMAT(#{endSendDate},'%Y-%m-%d')
+			</if>
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.office = #{office.id}
+			</if>
+			<if test="leaderBy != null and leaderBy.id != null and leaderBy.id != ''">
+				AND a.leader_by = #{leaderBy.id}
+			</if>
+			<if test="beginJobBeginDate !=null">
+				AND  DATE_FORMAT(a.job_begin_date,'%Y-%m-%d') &gt;= DATE_FORMAT(#{beginJobBeginDate},'%Y-%m-%d')
+			</if>
+			<if test="endJobBeginDate !=null">
+				AND  DATE_FORMAT(a.job_begin_date,'%Y-%m-%d') &lt;= DATE_FORMAT(#{endJobBeginDate},'%Y-%m-%d')
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="malfunctionType != null and malfunctionType != ''">
+				AND a.malfunction_type = #{malfunctionType}
+			</if>
+			<if test="whatDay != null and whatDay != ''">
+				AND a.what_day = #{whatDay}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.send_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultMap="TpMaintenanceResult" >
+		SELECT 
+			<include refid="tpMaintenanceColumns"/>
+		FROM tp_maintenance a
+		<include refid="tpMaintenanceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tp_maintenance(
+			id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			num,
+			job_type,
+			malfunction_type,
+			job_source,
+			job_description,
+			location,
+			area_id,
+			roadcross_id,
+			nearest_junction,
+			road_id,
+			address,
+			nearest_poi,
+			send_by,
+			send_date,
+			what_day,
+			office,
+			leader_by,
+			job_begin_date,
+			job_end_date,
+			money,
+			process,
+			pre_pic,
+			middle_pic,
+			after_pic,
+			approve,
+			status
+		) VALUES (
+			#{id},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{num},
+			#{jobType},
+			#{malfunctionType},
+			#{source},
+			#{jobDescription},
+			#{location},
+			#{area.id},
+			#{roadcross.id},
+			#{nearestJunction},
+			#{road.id},
+			#{address},
+			#{nearestPoi},
+			#{sendBy.id},
+			#{sendDate},
+			#{whatDay},
+			#{office.id},
+			#{leaderBy.id},
+			#{jobBeginDate},
+			#{jobEndDate},
+			#{money},
+			#{process},
+			#{prePic},
+			#{middlePic},
+			#{afterPic},
+			#{approve},
+			#{status}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tp_maintenance SET 	
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			num = #{num},
+			job_type = #{jobType},
+			malfunction_type = #{malfunctionType},
+			job_source = #{source},
+			job_description = #{jobDescription},
+			location = #{location},
+			area_id = #{area.id},
+			roadcross_id = #{roadcross.id},
+			nearest_junction = #{nearestJunction},
+			road_id = #{road.id},
+			address = #{address},
+			nearest_poi = #{nearestPoi},
+			send_by = #{sendBy.id},
+			send_date = #{sendDate},
+			what_day = #{whatDay},
+			office = #{office.id},
+			leader_by = #{leaderBy.id},
+			job_begin_date = #{jobBeginDate},
+			job_end_date = #{jobEndDate},
+			money = #{money},
+			process = #{process},
+			pre_pic = #{prePic},
+			middle_pic = #{middlePic},
+			after_pic = #{afterPic},
+			approve = #{approve},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM tp_maintenance
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE tp_maintenance SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="TpMaintenance" statementType="STATEMENT">
+		select * FROM tp_maintenance  where ${propertyName} = '${value}'
+	</select>
+
+	<select id="findTongJiList" resultType="com.jeeplus.modules.tp.maintenance.entity.TpExportReport">
+		SELECT
+		tmi.remarks as verb,
+		tmi.category,
+		tmp.`name` as itemName,
+		concat( tmi.remarks,' ', tmi.category,'-',tmp.`name` ) AS projectName,
+		tmp.unit,
+		SUM( tmi.count ) AS allCount,
+		tmi.price,
+		SUM( tmi.money ) AS allMoney
+		FROM
+		tp_maintenance a
+		LEFT JOIN sys_area area ON area.id = a.area_id
+		LEFT JOIN tp_road_crossing roadcross ON roadcross.id = a.roadcross_id
+		LEFT JOIN tp_road road ON road.id = a.road_id
+		LEFT JOIN sys_user sendBy ON sendBy.id = a.send_by
+		LEFT JOIN sys_office office ON office.id = a.office
+		LEFT JOIN sys_user leaderBy ON leaderBy.id = a.leader_by
+		LEFT JOIN tp_maintenance_item tmi ON a.id = tmi.maintenance_id
+		LEFT JOIN tp_material_part tmp on tmp.id = tmi.material_part_id
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+			<if test="num != null and num != ''">
+				AND a.num = #{num}
+			</if>
+			<if test="jobType != null and jobType != ''">
+				AND concat(a.job_type,',') like concat('%',#{jobType},',%')
+			</if>
+			<if test="jobDescription != null and jobDescription != ''">
+				AND a.job_description = #{jobDescription}
+			</if>
+			<if test="source != null and source != ''">
+				AND a.job_source = #{source}
+			</if>
+			<if test="area != null and area.id != null and area.id != ''">
+				AND a.area_id = #{area.id}
+			</if>
+			<if test="roadcross != null and roadcross.id != null and roadcross.id != ''">
+				AND a.roadcross_id = #{roadcross.id}
+			</if>
+			<if test="road != null and road.id != null and road.id != ''">
+				AND a.road_id = #{road.id}
+			</if>
+			<if test="address != null and address != ''">
+				AND a.address LIKE
+				<if test="dbName == 'oracle'">'%'||#{address}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{address}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{address},'%')</if>
+			</if>
+			<if test="nearestPoi != null and nearestPoi != ''">
+				AND a.nearest_poi LIKE
+				<if test="dbName == 'oracle'">'%'||#{nearestPoi}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{nearestPoi}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{nearestPoi},'%')</if>
+			</if>
+			<if test="sendBy != null and sendBy.id != null and sendBy.id != ''">
+				AND a.send_by = #{sendBy.id}
+			</if>
+			<if test="beginSendDate !=null">
+				AND  DATE_FORMAT(a.send_date,'%Y-%m-%d') &gt;= DATE_FORMAT(#{beginSendDate},'%Y-%m-%d')
+			</if>
+			<if test="endSendDate !=null">
+				AND  DATE_FORMAT(a.send_date,'%Y-%m-%d') &lt;= DATE_FORMAT(#{endSendDate},'%Y-%m-%d')
+			</if>
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.office = #{office.id}
+			</if>
+			<if test="leaderBy != null and leaderBy.id != null and leaderBy.id != ''">
+				AND a.leader_by = #{leaderBy.id}
+			</if>
+			<if test="beginJobBeginDate !=null">
+				AND  DATE_FORMAT(a.job_begin_date,'%Y-%m-%d') &gt;= DATE_FORMAT(#{beginJobBeginDate},'%Y-%m-%d')
+			</if>
+			<if test="endJobBeginDate !=null">
+				AND  DATE_FORMAT(a.job_begin_date,'%Y-%m-%d') &lt;= DATE_FORMAT(#{endJobBeginDate},'%Y-%m-%d')
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="malfunctionType != null and malfunctionType != ''">
+				AND a.malfunction_type = #{malfunctionType}
+			</if>
+			<if test="whatDay != null and whatDay != ''">
+				AND a.what_day = #{whatDay}
+			</if>
+		</where>
+		GROUP BY
+		tmi.remarks,
+		tmi.category,
+		tmp.`name`,
+		concat( tmi.remarks, ' ', tmi.category,'-',tmp.`name` ) ,
+		tmp.unit,
+		tmi.price
+		HAVING projectName is not null
+		<choose>
+			<when test="group != null and group == '1'.toString()">
+				ORDER BY tmi.category
+			</when>
+			<when test="group != null and group == '2'.toString()">
+				ORDER BY tmi.remarks
+			</when>
+			<when test="group != null and group == '3'.toString()">
+				ORDER BY tmp.unit
+			</when>
+			<otherwise>
+				<choose>
+					<when test="orderBy != null and orderBy != ''">
+						ORDER BY ${orderBy}
+					</when>
+					<otherwise>
+						ORDER BY allMoney DESC
+					</otherwise>
+				</choose>
+			</otherwise>
+		</choose>
+
+	</select>
+
+</mapper>

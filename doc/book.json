@@ -1,0 +1,48 @@
+{
+    "author": "尹彬 <1052921694@qq.cn>",
+    "description": "交通巡检平台解决方案",
+    "extension": null,
+    "generator": "site",
+    "isbn": "",
+    "links": {
+        "sharing": {
+            "all": null,
+            "facebook": null,
+            "google": null,
+            "twitter": null,
+            "weibo": null
+        },
+        "sidebar": {
+            "下载PDF版本": "http://docs.yinbin.ink/traffic_polling/解决方案V0.5.pdf"
+        }
+    },
+    "output": null,
+    "pdf": {
+        "fontSize": 12,
+        "footerTemplate": null,
+        "headerTemplate": null,
+        "margin": {
+            "bottom": 36,
+            "left": 62,
+            "right": 62,
+            "top": 36
+        },
+        "pageNumbers": false,
+        "paperSize": "a4"
+    },
+    "plugins": [
+        "custom-js-css",
+        "-sharing"
+    ],
+    "pluginsConfig": {
+        "custom-js-css": {
+            "js": [
+            ],
+            "css": [
+              "./assets/my.css"
+            ]
+          }
+    },
+    "title": "交通巡检平台解决方案",
+    "variables": {}
+}
